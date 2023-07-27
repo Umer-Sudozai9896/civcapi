@@ -397,7 +397,7 @@ body{
                     });
                 }
                 var modalHtml = `<div class="row">
-                    <div class='col-4'>
+                    <div class='col-md-5 col-xs-12 '>
                         ${info.person.photoUrl ? '<img class="img-rounded img-fluid" src="' + info.person.photoUrl + '" alt="' + info.person.name + '" title="' + info.person.name + '"  style="max-width: 150px !important;" />' : '<img class="img-rounded img-fluid" src="images/blank-person.jpg" alt="' + info.person.name + '" title="' + info.person.name + '"  style="max-width: 150px !important;" />'}
                     <br />
                     <strong>
@@ -407,7 +407,7 @@ body{
                         ${(info.office.name != true && info.person.name != false) ? info.office.name : 'U.S. Senator'}<br>
                             ${info.jurisdiction}
                         </div>
-                        <div class='col-8'>
+                        <div class='col-md-7 col-xs-12 '>
                             <p><strong>Contact ${info.person.name}</strong></p>
                             <hr>
                             ${phonesHtml}
