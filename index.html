@@ -23,36 +23,39 @@
         text-decoration: none;
         color: grey;
     }
+
+    .headshot {
+        max-width: 50px;
+    }
 </style>
 
 <body>
     <div class="container-fluid my-4 p-5">
         <div class="row">
-            <div class="col-md-5 p-4">
+            <div class="col-md-4 p-4">
                 <div class="form-group">
-                    <label for="">Address</label>
+                    <label for=""><b>Address</b></label>
                     <input type="text" name="" id="address-input" class="form-control" placeholder="Kansas City, MO"
                         aria-describedby="helpId">
 
                 </div>
-                <button type="button" id="findBtn" class="btn btn-success my-2 float-end btn-block">Find
+                <button type="button" id="findBtn" class="btn btn-warning my-2 float-end btn-block">Find
                     Representatives</button>
             </div>
-            <div class="col-md-2"></div>
-            <div class="col-md-5 p-4">
-                <h5>Output Area</h5>
+            <div class="col-md-1"></div>
+            <div class="col-md-7 p-4">
                 <div class="table-responsive">
                     <table class="table table-striped" id="repTable">
                         <thead>
                             <tr>
-                                <th scope="col">
+                                <th scope="col" width="10%">
                                     <!-- picture  -->
                                 </th>
-                                <th scope="col"><b>Representative</b></th>
-                                <th scope="col"><b>Office</b></th>
-                                <th scope="col"><b>Address</b></th>
-                                <th scope="col"><b>Links</b></th>
-                                <th scope="col">
+                                <th scope="col" width="20%"><b>Representative</b></th>
+                                <th scope="col" width="15%"><b>Office</b></th>
+                                <th scope="col" width="35%"><b>Address</b></th>
+                                <th scope="col" width="10%"><b>Links</b></th>
+                                <th scope="col" width="10%">
                                     <!-- action  -->
                                 </th>
                             </tr>
@@ -172,12 +175,16 @@
         $(document).ready(function () {
             $('#findBtn').on('click', function () {
                 var address = $('#address-input').val();
+                if (address == '') {
+                    return;
+                }
                 $.address.parameter('address', encodeURIComponent(address));
                 var params = {
                     'key': "AIzaSyC9H8OAbV92lNplhiIzfzqDZuPvVUgXeWE",
                     'address': address
                 }
                 $.when($.getJSON(INFO_API, params)).then(function (data) {
+                
                     console.log(data);
                     var divisions = data['divisions'];
                     var officials = data['officials'];
@@ -254,7 +261,6 @@
                             });
                         }
                     });
-                    $('#output').text(local_people, county_people, state_people, federal_people);
                     console.log(local_people);
                     console.log(county_people);
                     console.log(state_people);
@@ -273,7 +279,11 @@
                         representatives.push(county_people[0]);
                     }
                     if (state_people.length > 0) {
-                        representatives.push(state_people[0]);
+                        for (let i = 0; i < state_people.length; i++) {
+                            if (representatives.length < 2) {
+                                representatives.push(state_people[i]);
+                            }
+                        }
                     }
                     console.log(senator);
                     console.log(representatives);
@@ -281,15 +291,15 @@
                     var senChannelsHtml = '';
                     if (senator[0].channels != null) {
                         senator[0].channels.forEach(c => {
-                            senChannelsHtml += `<span><a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a></span>`;
+                            senChannelsHtml += `<a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a>`;
                         });
                     }
                     tblHtml += `<tr>
                                 <td>
-                                    <img src="${senator[0].person.photoUrl}" class="img-rounded headshot" alt="${senator[0].person.name}">
+                                    <img src="${(senator[0].person.photoUrl != undefined) ? senator[0].person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${senator[0].person.name}">
                                 </td>
                                 <td>${senator[0].person.name}</td>
-                                <td>${(senator[0].office.name != true && senator[0].office.name != false) ? senator[0].office.name : ""}</td>
+                                <td>${(senator[0].office.name != true && senator[0].office.name != false) ? senator[0].office.name : "U.S. Senator"}</td>
                                 <td>${(senator[0].address != null) ? senator[0].address[0].line1 + " " + senator[0].address[0].city + ", " + senator[0].address[0].state + " " + senator[0].address[0].zip : ""}</td>
                                 <td>
                                     ${senChannelsHtml}
@@ -302,13 +312,13 @@
                         var repChannelsHtml = '';
                         if (r.channels != null) {
                             r.channels.forEach(c => {
-                                repChannelsHtml += `<span><a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a></span>`;
+                                repChannelsHtml += `<a href="${c.link}" class="fa me-1 fa-fw fa-${c.icon}" target="_blank"></a>`;
 
                             });
                         }
                         tblHtml += `<tr>
                                 <td>
-                                    <img src="${r.person.photoUrl}" class="img-rounded headshot" alt="${r.person.name}">
+                                    <img src="${(r.person.photoUrl) ? r.person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${r.person.name}">
                                 </td>
                                 <td>${r.person.name}</td>
                                 <td>${(r.office.name != true && r.office.name != false) ? r.office.name : ""}</td>
@@ -322,6 +332,10 @@
                             </tr>`;
                     });
                     $('tbody').html(tblHtml);
+
+                }, function (error) {
+                    console.error('Error occurred:', error);
+                    $('tbody').html('<tr><td colspan="6" class="text-center text-muted">No representative found for selected address.</td></tr>');
                 });
             });
             $('body').on('click', '.btn-contact', function () {
