@@ -26,17 +26,6 @@
 </style>
 
 <body>
-
-
-
-    
-
-
-    <!-- Optional: Place to the bottom of scripts -->
-    <script>
-        const myModal = new bootstrap.Modal(document.getElementById('modalId'), options)
-
-    </script>
     <div class="container-fluid my-4 p-5">
         <div class="row">
             <div class="col-md-5 p-4">
@@ -69,44 +58,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- <tr>
-                                <td>
-                                    <img src="" class="img-rounded headshot" alt="">
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <span>
-                                        <a href="" class="fa fa-fw fa-" target="_blank"></a>
-                                    </span>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary">Contact</button>
-                                </td>
-                            </tr> -->
+
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
         <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="contactModalTitle"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid" id="modalContent"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="contactModalTitle"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid" id="modalContent"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -305,9 +279,11 @@
                     console.log(representatives);
                     var tblHtml = '';
                     var senChannelsHtml = '';
-                    senator[0].channels.forEach(c => {
-                        senChannelsHtml += `<span><a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a></span>`;
-                    });
+                    if (senator[0].channels != null) {
+                        senator[0].channels.forEach(c => {
+                            senChannelsHtml += `<span><a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a></span>`;
+                        });
+                    }
                     tblHtml += `<tr>
                                 <td>
                                     <img src="${senator[0].person.photoUrl}" class="img-rounded headshot" alt="${senator[0].person.name}">
@@ -324,10 +300,12 @@
                             </tr>`;
                     representatives.forEach(r => {
                         var repChannelsHtml = '';
-                        r.channels.forEach(c => {
-                            repChannelsHtml += `<span><a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a></span>`;
+                        if (r.channels != null) {
+                            r.channels.forEach(c => {
+                                repChannelsHtml += `<span><a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a></span>`;
 
-                        });
+                            });
+                        }
                         tblHtml += `<tr>
                                 <td>
                                     <img src="${r.person.photoUrl}" class="img-rounded headshot" alt="${r.person.name}">
@@ -350,7 +328,7 @@
                 var info = all_people[$(this).data('id')];
                 var phonesHtml = '';
                 var emailsHtml = '';
-                $('#contactModalTitle').text("Contact "+info.person.name)
+                $('#contactModalTitle').text("Contact " + info.person.name)
                 if (info.phones) {
                     $.each(info.phones, function (i, phone) {
                         if ((i + 1) < info.phones.length) {
