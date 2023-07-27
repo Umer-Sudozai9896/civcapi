@@ -38,12 +38,17 @@
         color: white;
 
     }
+
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        --bs-table-accent-bg: #F0EEFE;
+        color: var(--bs-table-striped-color);
+    }
 </style>
 
 <body>
     <div class="container-fluid my-4">
         <div class="row">
-            <div class="col-12 ">
+            <div class="col-12 mb-3">
                 <div class="row align-items-center justify-content-end">
                     <div class="col-md-6 mb-2">
                         <div class="form-group">
@@ -61,28 +66,34 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12" hidden id="outputDiv">
-                <div class="table-responsive">
-                    <table class="table table-striped" id="repTable">
-                        <thead>
-                            <tr>
-                                <th scope="col" width="10%">
-                                    <!-- picture  -->
-                                </th>
-                                <th scope="col" width="20%"><b>Representative</b></th>
-                                <th scope="col" width="15%"><b>Office</b></th>
-                                <th scope="col" width="35%"><b>Address</b></th>
-                                <th scope="col" width="10%"><b>Links</b></th>
-                                <th scope="col" width="10%">
-                                    <!-- action  -->
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div class="col-12 " hidden id="outputDiv">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Representatives</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="repTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="10%">
+                                            <!-- picture  -->
+                                        </th>
+                                        <th scope="col" width="20%"><b>Representative</b></th>
+                                        <th scope="col" width="15%"><b>Office</b></th>
+                                        <th scope="col" width="35%"><b>Address</b></th>
+                                        <th scope="col" width="10%"><b>Links</b></th>
+                                        <th scope="col" width="10%">
+                                            <!-- action  -->
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
-                        </tbody>
-                    </table>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </div>
         <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalTitle"
@@ -316,14 +327,14 @@
                                 <td>
                                     <img src="${(senator[0].person.photoUrl != undefined) ? senator[0].person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${senator[0].person.name}">
                                 </td>
-                                <td>${senator[0].person.name}</td>
+                                <td>${senator[0].person.name +" "+formatParty(senator[0].person.party)} </td>
                                 <td>${(senator[0].office.name != true && senator[0].office.name != false) ? senator[0].office.name : "U.S. Senator"}</td>
                                 <td>${(senator[0].address != null) ? senator[0].address[0].line1 + " " + senator[0].address[0].city + ", " + senator[0].address[0].state + " " + senator[0].address[0].zip : ""}</td>
                                 <td>
                                     ${senChannelsHtml}
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-outline-primary btn-contact" data-target="#contactModal" data-toggle="modal" data-id="${senator[0].pseudo_id}">Contact</button>
+                                    <button type="button" class="btn btn-warning text-white btn-contact" data-target="#contactModal" data-toggle="modal" data-id="${senator[0].pseudo_id}">Contact</button>
                                 </td>
                             </tr>`;
                     representatives.forEach(r => {
@@ -338,14 +349,14 @@
                                 <td>
                                     <img src="${(r.person.photoUrl) ? r.person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${r.person.name}">
                                 </td>
-                                <td>${r.person.name}</td>
+                                <td>${r.person.name +" "+formatParty(r.person.party)}</td>
                                 <td>${(r.office.name != true && r.office.name != false) ? r.office.name : ""}</td>
                                 <td>${(r.address != null) ? r.address[0].line1 + " " + r.address[0].city + ", " + r.address[0].state + " " + r.address[0].zip : ""}</td>
                                 <td>
                                     ${repChannelsHtml}
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-outline-primary btn-contact" data-toggle="modal" data-target="#contactModal" data-id="${r.pseudo_id}">Contact</button>
+                                    <button type="button" class="btn btn-warning text-white btn-contact" data-toggle="modal" data-target="#contactModal" data-id="${r.pseudo_id}">Contact</button>
                                 </td>
                             </tr>`;
                     });
@@ -390,7 +401,7 @@
                         ${info.person.name}
                         ${formatParty(info.person.party)}
                     </strong><br>
-                        ${info.office.name}<br>
+                        ${(info.office.name != true && info.person.name != false) ? info.office.name : 'U.S. Senator'}<br>
                             ${info.jurisdiction}
                         </div>
                         <div class='col-8'>
