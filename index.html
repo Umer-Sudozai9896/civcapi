@@ -43,6 +43,7 @@
         --bs-table-accent-bg: #F0EEFE;
         color: var(--bs-table-striped-color);
     }
+   
 </style>
 
 <body>
@@ -395,7 +396,7 @@
                 }
                 var modalHtml = `<div class="row">
                     <div class='col-4'>
-                        ${info.person.photoUrl ? '<img class="img-rounded img-fluid" src="' + info.person.photoUrl + '" alt="' + info.person.name + '" title="' + info.person.name + '" />' : '<img class="img-rounded img-fluid" src="images/blank-person.jpg" alt="' + info.person.name + '" title="' + info.person.name + '" />'}
+                        ${info.person.photoUrl ? '<img class="img-rounded img-fluid" src="' + info.person.photoUrl + '" alt="' + info.person.name + '" title="' + info.person.name + '"  style="max-width: 150px !important;" />' : '<img class="img-rounded img-fluid" src="images/blank-person.jpg" alt="' + info.person.name + '" title="' + info.person.name + '"  style="max-width: 150px !important;" />'}
                     <br />
                     <strong>
                         ${info.person.name}
