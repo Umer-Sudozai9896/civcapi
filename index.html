@@ -27,23 +27,41 @@
     .headshot {
         max-width: 50px;
     }
+
+    .theme-btn {
+        background-color: #D1701F;
+        color: white;
+    }
+
+    .theme-btn:hover {
+        background-color: #A3622B;
+        color: white;
+
+    }
 </style>
 
 <body>
-    <div class="container-fluid my-4 p-5">
+    <div class="container-fluid my-4">
         <div class="row">
-            <div class="col-md-4 p-4">
-                <div class="form-group">
-                    <label for=""><b>Address</b></label>
-                    <input type="text" name="" id="address-input" class="form-control" placeholder="Kansas City, MO"
-                        aria-describedby="helpId">
+            <div class="col-12 ">
+                <div class="row align-items-end justify-content-end">
+                    <div class="col-md-6 mb-2">
+                        <div class="form-group">
+                            <label for=""><b>Address</b></label>
+                            <input type="text" name="" id="address-input" class="form-control"
+                                placeholder="Clark County" aria-describedby="helpId">
+                            <small id="helpId" class="text-muted">Enter your address to find and contact your elected
+                                representatives.</small>
 
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <button type="button" id="findBtn" class="btn  theme-btn btn-block">Find
+                            Representatives</button>
+                    </div>
                 </div>
-                <button type="button" id="findBtn" class="btn btn-warning my-2 float-end btn-block">Find
-                    Representatives</button>
             </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-7 p-4">
+            <div class="col-12" hidden id="outputDiv">
                 <div class="table-responsive">
                     <table class="table table-striped" id="repTable">
                         <thead>
@@ -184,7 +202,7 @@
                     'address': address
                 }
                 $.when($.getJSON(INFO_API, params)).then(function (data) {
-                
+
                     console.log(data);
                     var divisions = data['divisions'];
                     var officials = data['officials'];
@@ -332,10 +350,13 @@
                             </tr>`;
                     });
                     $('tbody').html(tblHtml);
+                    $('#outputDiv').removeAttr('hidden');
 
                 }, function (error) {
                     console.error('Error occurred:', error);
                     $('tbody').html('<tr><td colspan="6" class="text-center text-muted">No representative found for selected address.</td></tr>');
+                    $('#outputDiv').removeAttr('hidden');
+
                 });
             });
             $('body').on('click', '.btn-contact', function () {
