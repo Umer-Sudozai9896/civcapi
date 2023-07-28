@@ -1,0 +1,23 @@
+representatives.forEach(r => {
+    var repChannelsHtml = '';
+    if (r.channels != null) {
+        r.channels.forEach(c => {
+            repChannelsHtml += `<a href="${c.link}" class="fa me-1 fa-fw fa-${c.icon}" target="_blank"></a>`;
+
+        });
+    }
+    tblHtml += `<tr>
+            <td>
+                <img src="${(r.person.photoUrl) ? r.person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${r.person.name}">
+            </td>
+            <td>${r.person.name + " " + formatParty(r.person.party)}</td>
+            <td>${(r.office.name != true && r.office.name != false) ? r.office.name : ""}</td>
+            <td>${(r.address != null) ? r.address[0].line1 + " " + r.address[0].city + ", " + r.address[0].state + " " + r.address[0].zip : ""}</td>
+            <td>
+                ${repChannelsHtml}
+            </td>
+            <td>
+                <button type="button" class="btn btn-warning text-white btn-contact" data-toggle="modal" data-target="#contactModal" data-id="${r.pseudo_id}">Contact</button>
+            </td>
+        </tr>`;
+});

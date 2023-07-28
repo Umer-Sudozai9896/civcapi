@@ -50,18 +50,18 @@
 </style>
 
 <body>
-    <div class="container-fluid my-4">
+    <div class="container-fluid mt-3">
         <div class="row">
             <div class="col-12 mb-3">
                 <div class="row align-items-center justify-content-end">
                     <div class="col-md-6 mb-2">
                         <div class="form-group">
-                            <label for=""><b>Address</b></label>
+                            <label for=""><b>Home Address</b></label>
                             <input type="text" name="" id="address-input" class="form-control"
-                                placeholder="Clark County" aria-describedby="helpId">
+                                placeholder="Enter Home Address" aria-describedby="helpId">
                             <div class="text-center">
-                                <small id="helpId" class="text-muted">Enter your address to find and contact your
-                                    elected representatives.</small>
+                                <small id="helpId" class="text-muted">Enter your home or voting registration address and
+                                    find your elected representatives' contact information.</small>
                             </div>
 
                         </div>
@@ -80,13 +80,13 @@
                             <table class="table table-striped" id="repTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col" width="10%">
+                                        <th scope="col" width="5%">
                                             <!-- picture  -->
                                         </th>
                                         <th scope="col" width="20%"><b>Representative</b></th>
                                         <th scope="col" width="15%"><b>Office</b></th>
                                         <th scope="col" width="35%"><b>Address</b></th>
-                                        <th scope="col" width="10%"><b>Links</b></th>
+                                        <th scope="col" width="15%"><b>Links</b></th>
                                         <th scope="col" width="10%">
                                             <!-- action  -->
                                         </th>
@@ -126,8 +126,31 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
     <script src="lib/jquery.address.js"></script>
+    <script>
+        function initAutocomplete() {
+            const input = document.getElementById('address-input');
+            const options = {
+                types: ['geocode'], // Restrict results to geographical locations.
+            };
+            const autocomplete = new google.maps.places.Autocomplete(input, options);
 
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script> -->
+            // Optional: Add an event listener to get the selected address details.
+            autocomplete.addListener('place_changed', function () {
+                const place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    console.log('No location data for this place.');
+                    return;
+                }
+                console.log('Selected place details:');
+                console.log('Name:', place.name);
+                console.log('Formatted Address:', place.formatted_address);
+                console.log('Latitude:', place.geometry.location.lat());
+                console.log('Longitude:', place.geometry.location.lng());
+            });
+        }
+    </script>
+    <script async
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVat6RaDXoL0EJKdasQfFDG00xoP-lBkE&libraries=places&callback=initAutocomplete"></script>
 
     <script>
         var INFO_API = 'https://www.googleapis.com/civicinfo/v2/representatives';
@@ -251,7 +274,6 @@
                                     };
                                     var person = officials[official];
                                     info['person'] = person;
-
                                     if (typeof person.channels !== 'undefined') {
                                         var channels = [];
                                         $.each(person.channels, function (i, channel) {
@@ -277,6 +299,7 @@
                                     }
                                     if (checkFederal(division_id, office_name)) {
                                         info['jurisdiction'] = 'Federal Government';
+                                        console.log(info);
                                         federal_people.push(info);
                                     } else if (checkState(division_id)) {
                                         info['jurisdiction'] = selected_state;
@@ -296,15 +319,12 @@
                             });
                         }
                     });
-                    console.log(local_people);
-                    console.log(county_people);
-                    console.log(state_people);
-                    console.log(federal_people);
-                    var senator = [];
+
+                    var senators = [];
                     var representatives = [];
                     federal_people.forEach(p => {
-                        if (p.office.name = "U.S. Senator" && p.office.roles.indexOf("legislatorUpperBody") != -1) {
-                            senator.push(p);
+                        if (p.office.name != "Vice President of the United States" && p.office.name != "President of the United States") {
+                            senators.push(p);
                         }
                     });
                     if (local_people.length > 0) {
@@ -320,52 +340,36 @@
                             }
                         }
                     }
-                    console.log(senator);
+                    console.log(senators);
                     console.log(representatives);
                     var tblHtml = '';
-                    var senChannelsHtml = '';
-                    if (senator[0].channels != null) {
-                        senator[0].channels.forEach(c => {
-                            senChannelsHtml += `<a href="${c.link}" class="fa fa-fw fa-${c.icon}" target="_blank"></a>`;
-                        });
-                    }
-                    tblHtml += `<tr>
-                                <td>
-                                    <img src="${(senator[0].person.photoUrl != undefined) ? senator[0].person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${senator[0].person.name}">
-                                </td>
-                                <td>${senator[0].person.name + " " + formatParty(senator[0].person.party)} </td>
-                                <td>${(senator[0].office.name != true && senator[0].office.name != false) ? senator[0].office.name : "U.S. Senator"}</td>
-                                <td>${(senator[0].address != null) ? senator[0].address[0].line1 + " " + senator[0].address[0].city + ", " + senator[0].address[0].state + " " + senator[0].address[0].zip : ""}</td>
-                                <td>
-                                    ${senChannelsHtml}
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-warning text-white btn-contact" data-target="#contactModal" data-toggle="modal" data-id="${senator[0].pseudo_id}">Contact</button>
-                                </td>
-                            </tr>`;
-                    representatives.forEach(r => {
-                        var repChannelsHtml = '';
-                        if (r.channels != null) {
-                            r.channels.forEach(c => {
-                                repChannelsHtml += `<a href="${c.link}" class="fa me-1 fa-fw fa-${c.icon}" target="_blank"></a>`;
-
+                    senators.forEach(c => {
+                        var senChannelsHtml = '';
+                        if (c.channels || c.urls) {
+                            c.channels.forEach(ch => {
+                                senChannelsHtml += `<a href="${ch.link}" class="fa fa-fw fa-${ch.icon}" target="_blank"></a>`;
+                            });
+                            c.urls.forEach(url => {
+                                senChannelsHtml += `<a href="${url}" class="fa fa-fw fa-globe" target="_blank"></a>`;
                             });
                         }
                         tblHtml += `<tr>
                                 <td>
-                                    <img src="${(r.person.photoUrl) ? r.person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${r.person.name}">
+                                    <img src="${(c.person.photoUrl != undefined) ? c.person.photoUrl : 'images/blank-person.jpg'}" class="img-rounded headshot" alt="${c.person.name}">
                                 </td>
-                                <td>${r.person.name + " " + formatParty(r.person.party)}</td>
-                                <td>${(r.office.name != true && r.office.name != false) ? r.office.name : ""}</td>
-                                <td>${(r.address != null) ? r.address[0].line1 + " " + r.address[0].city + ", " + r.address[0].state + " " + r.address[0].zip : ""}</td>
+                                <td>${c.person.name + " " + formatParty(c.person.party)} </td>
+                                <td>${(c.office.name != true && c.office.name != false) ? c.office.name : "U.S. Senator"}</td>
+                                <td>${(c.address != null) ? c.address[0].line1 + " " + c.address[0].city + ", " + c.address[0].state + " " + c.address[0].zip : ""}</td>
                                 <td>
-                                    ${repChannelsHtml}
+                                    ${senChannelsHtml}
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-warning text-white btn-contact" data-toggle="modal" data-target="#contactModal" data-id="${r.pseudo_id}">Contact</button>
+                                    <button type="button" class="btn btn-warning text-white btn-contact" data-target="#contactModal" data-toggle="modal" data-id="${c.pseudo_id}">Contact</button>
                                 </td>
                             </tr>`;
                     });
+
+
                     $('tbody').html(tblHtml);
                     $('#outputDiv').removeAttr('hidden');
 
@@ -421,29 +425,6 @@
                 $('#modalContent').html(modalHtml);
                 $('#contactModal').modal('show');
             })
-            // function initAutocomplete() {
-            //     const input = document.getElementById('address-input');
-            //     const options = {
-            //         types: ['geocode'], // Restrict results to geographical locations.
-            //     };
-            //     const autocomplete = new google.maps.places.Autocomplete(input, options);
-
-            //     // Optional: Add an event listener to get the selected address details.
-            //     autocomplete.addListener('place_changed', function () {
-            //         const place = autocomplete.getPlace();
-            //         if (!place.geometry) {
-            //             console.log('No location data for this place.');
-            //             return;
-            //         }
-            //         console.log('Selected place details:');
-            //         console.log('Name:', place.name);
-            //         console.log('Formatted Address:', place.formatted_address);
-            //         console.log('Latitude:', place.geometry.location.lat());
-            //         console.log('Longitude:', place.geometry.location.lng());
-            //     });
-            // }
-
-
         });
     </script>
 
