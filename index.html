@@ -72,34 +72,26 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 " hidden id="outputDiv">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title">Representatives</h4>
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="repTable">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" width="5%">
-                                            <!-- picture  -->
-                                        </th>
-                                        <th scope="col" width="20%"><b>Representative</b></th>
-                                        <th scope="col" width="15%"><b>Office</b></th>
-                                        <th scope="col" width="35%"><b>Address</b></th>
-                                        <th scope="col" width="15%"><b>Links</b></th>
-                                        <th scope="col" width="10%">
-                                            <!-- action  -->
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+            <div class="col-12 " id="outputDiv">
 
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="row justify-content-center align-items-center">
+                    <!-- <div class="col-md-3"></div> -->
+                    <div class="col-md-5">
+                        <p>
+                            Presented here is a valuable tool that empowers you to easily look up your elected
+                            representatives across the United States. Simply enter your address, and we will promptly
+                            identify who represent you in the government.</p>
+
+                        <p> Being well-informed about these representatives and directly engaging with their offices
+                            offers the most effective means of influencing how our government functions.</p>
+
+                        <p>Feel strongly about a particular matter? <b>Discover your rep and make your voice heard!</b>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <img src="images/usa-r.png" alt="" height="300px">
                     </div>
                 </div>
-
             </div>
         </div>
         <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalTitle"
@@ -369,14 +361,59 @@
                             </tr>`;
                     });
 
+                    $('#outputDiv').html(`<div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Representatives</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="repTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="5%">
+                                        </th>
+                                        <th scope="col" width="20%"><b>Representative</b></th>
+                                        <th scope="col" width="15%"><b>Office</b></th>
+                                        <th scope="col" width="35%"><b>Address</b></th>
+                                        <th scope="col" width="15%"><b>Links</b></th>
+                                        <th scope="col" width="10%">
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                ${tblHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`);
 
-                    $('tbody').html(tblHtml);
-                    $('#outputDiv').removeAttr('hidden');
+
 
                 }, function (error) {
                     console.error('Error occurred:', error);
-                    $('tbody').html('<tr><td colspan="6" class="text-center text-muted">No representative found for selected address.</td></tr>');
-                    $('#outputDiv').removeAttr('hidden');
+                    $('#outputDiv').html(`<div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Representatives</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="repTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" width="5%">
+                                        </th>
+                                        <th scope="col" width="20%"><b>Representative</b></th>
+                                        <th scope="col" width="15%"><b>Office</b></th>
+                                        <th scope="col" width="35%"><b>Address</b></th>
+                                        <th scope="col" width="15%"><b>Links</b></th>
+                                        <th scope="col" width="10%">
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="6" class="text-center text-muted">No representative found for selected address.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>`);
 
                 });
             });
